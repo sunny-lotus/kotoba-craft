@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>ことばクラフト</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* 見た目の決まり（仕様書 1-18, 1-19）
+   色：紙・すみ・気持ちの色1つ。部品の色は小さな丸と文の下線だけ。
+   線：2pxのすみ色、角は14px。影は使わず、さわると少し持ち上がる。
+   文字：13/16/20/28 の4つ。子どもが読む文とカードは教科書体（Klee One）、ほかは UD ゴシック。
+   余白：8 の倍数（8/16/24/40）だけ。 */
+:root{
+  --paper:#fbf7f0; --ink:#2b2118; --mute:#8c7f70; --line:#d9cdbb; --white:#fff;
+  --feel:#f2a516; --feel-soft:#fdeccb;
+  --p-hajime:#b9ad9a; --p-karada:#f08a3c; --p-mieta:#2e93dd; --p-koe:#e0559a; --p-tatoe:#7b5cff; --p-kimochi:#2f9e5b;
+  --r:14px;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--paper);color:var(--ink)}
+body{font-family:"BIZ UDPGothic",sans-serif;font-size:16px;line-height:1.7;word-break:keep-all;overflow-wrap:anywhere}
+button,textarea{font:inherit;color:inherit}
+/* さわると ふわっと 浮いて、下に すみ色の 影が できる。おすと しずむ。 */
+button{cursor:pointer;border:2px solid var(--ink);border-radius:var(--r);background:var(--white);padding:8px 16px;
+  transition:transform .18s cubic-bezier(.3,1.6,.5,1),box-shadow .18s ease;box-shadow:0 0 0 var(--ink)}
+button:hover{transform:translateY(-4px);box-shadow:0 5px 0 var(--ink)}
+button:active{transform:translateY(1px);box-shadow:0 0 0 var(--ink);transition-duration:.06s}
+button.ghost:hover,.slot.empty:hover{box-shadow:0 5px 0 var(--line)}
+button:disabled:hover,.bar .home:hover{transform:none;box-shadow:none}
+button:focus-visible{outline:3px solid var(--feel);outline-offset:2px}
+.k{font-family:"Klee One",serif;font-weight:600}
+rt{font-family:"BIZ UDPGothic",sans-serif;font-weight:400;font-size:.45em;letter-spacing:0}
+.dark{background:var(--ink);color:var(--paper)}
+.ghost{border-style:dashed;border-color:var(--line);color:var(--mute);background:transparent}
+.hard{display:inline-block;font-family:"BIZ UDPGothic",sans-serif;font-size:13px;font-weight:700;border:1.5px solid currentColor;border-radius:999px;padding:0 8px;margin-left:8px;opacity:.7;vertical-align:middle;line-height:1.5}
+.lion img{display:block;height:100%;width:auto}
+
+/* ヘッダー */
+.bar{display:flex;align-items:center;gap:16px;height:56px;padding:0 24px;border-bottom:2px solid var(--line)}
+.bar .home{font-weight:700;border:none;background:none;padding:8px 0;font-size:16px}
+.bar .crumb{color:var(--mute);font-size:16px}
+.bar .sp{flex:1}
+.bar button.ic{border-radius:999px;padding:4px 16px;font-size:13px;font-weight:700}
+main{max-width:1320px;margin:0 auto;padding:24px 40px}
+
+/* タイトル */
+.title{min-height:calc(100vh - 56px);display:grid;place-items:center;text-align:center;padding:40px 16px}
+.title .lions{display:flex;justify-content:center;gap:40px;height:150px}
+.title h1{font-size:44px;margin:16px 0 8px;letter-spacing:.08em}
+/* タイトルの 文字が 1文字ずつ ずれて ゆらゆら 浮く */
+.title h1 span{display:inline-block;animation:float 2.8s ease-in-out infinite;animation-delay:calc(var(--i) * -.35s)}
+@keyframes float{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-6px) rotate(-3deg)}75%{transform:translateY(3px) rotate(2deg)}}
+.title .lions .lion{animation:sway 3.2s ease-in-out infinite;transform-origin:50% 100%}
+.title .lions .lion:last-child{animation-delay:-1.6s}
+@keyframes sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg) translateY(-4px)}}
+@media (prefers-reduced-motion:reduce){.title h1 span,.title .lions .lion{animation:none}button{transition:none}}
+.title p{margin:0 0 40px;color:var(--mute)}
+.title .big{display:grid;grid-template-columns:repeat(3,220px);gap:16px;justify-content:center}
+.title .big button{padding:24px 16px;font-size:20px;font-weight:700}
+.title .big small{display:block;font-size:13px;color:var(--mute);font-weight:400;margin-top:8px}
+.title .small{display:flex;gap:16px;justify-content:center;margin-top:24px}
+.title .small button{border-radius:999px;font-size:16px;padding:8px 24px}
+
+/* えらぶ画面（場面・気持ち） */
+.ask{display:grid;grid-template-columns:128px 1fr;gap:24px;align-items:center;margin-bottom:40px}
+.ask .lion{height:128px}
+.ask h2{font-size:28px;margin:0;line-height:1.4}
+.ask p{margin:8px 0 0;color:var(--mute)}
+.tiles{display:grid;gap:16px}
+.tiles.s4{grid-template-columns:repeat(4,1fr)}
+.tiles.s5{grid-template-columns:repeat(5,1fr)}
+.tiles button{padding:24px 16px;font-size:20px;text-align:center;font-weight:700}
+.tiles .dot{display:block;width:16px;height:16px;border-radius:50%;margin:0 auto 8px;background:var(--fc)}
+.tiles button.pre{background:var(--fs)}
+.own textarea{width:100%;min-height:120px;border:2px solid var(--ink);border-radius:var(--r);padding:16px;font-size:28px;line-height:1.6;background:var(--white);resize:vertical}
+.own .row{display:flex;gap:16px;margin-top:16px}
+.own .row button{font-size:20px;font-weight:700;padding:8px 24px}
+
+/* 文（共通） */
+.bef{font-size:16px;color:var(--mute);margin:0 0 8px}
+.bef b{font-size:13px;border:1.5px solid var(--mute);border-radius:999px;padding:0 8px;margin-right:8px}
+.now{font-size:28px;line-height:1.85}
+.seg{background-image:linear-gradient(var(--pc),var(--pc));background-repeat:no-repeat;background-size:100% 4px;background-position:0 94%}
+.seg.p-hajime{background-size:0 0}
+.seg.new{animation:glow .8s}
+@keyframes glow{0%{background-size:100% 100%}100%{background-size:100% 4px}}
+.acts{display:flex;gap:8px}
+.acts button{font-weight:700;padding:8px 24px}
+.praise{margin:0 0 16px;color:var(--mute)}
+.cardgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.cardgrid button{text-align:left;font-size:20px;padding:16px;line-height:1.5}
+.cardgrid button.on{background:var(--ink);color:var(--paper)}
+.meter{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.meter button{font-size:20px;padding:16px 8px}
+.meter button.on{background:var(--ink);color:var(--paper)}
+.meter small{display:block;font-family:"BIZ UDPGothic",sans-serif;font-size:13px;font-weight:400;opacity:.7}
+
+/* すがた：クラフト */
+.craft .top{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:end}
+.craft .acts{flex-direction:column}
+.bench{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin:24px 0}
+.slot{display:flex;flex-direction:column;gap:8px;text-align:left;min-height:104px;padding:16px}
+.slot .nm{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--mute)}
+.slot .nm::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--pc)}
+.slot .val{font-size:16px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+/* 文が長く なったら、文字を 一だん 小さく して 画面に おさめる */
+.now.long{font-size:24px}
+.now.xlong{font-size:20px}
+.slot .plus{margin:auto;font-size:13px;color:var(--mute);font-weight:700}
+.slot.empty{border-style:dashed;border-color:var(--line);background:transparent}
+.slot.open{background:var(--feel-soft);transform:translateY(-3px)}
+.slot.lock{opacity:.6;cursor:default}
+.slot.lock:hover{transform:none}
+.tray{display:grid;grid-template-columns:120px 1fr;gap:24px;align-items:start}
+.tray .lion{height:120px}
+.tray h3{margin:0 0 8px;font-size:28px;line-height:1.3}
+
+/* すがた：ノート */
+.note{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:start}
+.paper{background:var(--white);border:2px solid var(--ink);border-radius:var(--r);padding:24px}
+.paper .now{min-height:260px;background:repeating-linear-gradient(transparent 0 calc(1.85em - 2px),#dbe7f1 calc(1.85em - 2px) 1.85em)}
+.paper .acts{margin-top:16px}
+.note .asking{display:grid;grid-template-columns:96px 1fr;gap:16px;align-items:center;margin-bottom:16px}
+.note .asking .lion{height:96px}
+.note .asking h3{margin:0;font-size:28px;line-height:1.3}
+.note .asking .praise{margin:0}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.tabs button{border-radius:999px;font-size:16px;padding:4px 16px;display:flex;align-items:center;gap:8px}
+.tabs button::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--pc)}
+.tabs button.on{background:var(--ink);color:var(--paper)}
+.tabs button.done::after{content:"✓";font-weight:700}
+.note .cardgrid{grid-template-columns:1fr 1fr}
+
+/* すがた：会話 */
+.chatv{display:grid;grid-template-columns:400px 1fr;gap:40px;align-items:start}
+.chatv .pin .now{font-size:24px}
+.chatv .pin .now.long,.chatv .pin .now.xlong{font-size:20px}
+.chatv .pin .acts{margin-top:16px}
+.chat{display:flex;flex-direction:column;gap:16px;max-height:calc(100vh - 56px - 48px);overflow:auto;padding:0 8px 40px 0;scrollbar-width:thin}
+.msg{display:grid;grid-template-columns:64px 1fr;gap:16px;align-items:end}
+.msg .lion{height:72px}
+.msg .bub{border:2px solid var(--ink);border-radius:20px 20px 20px 4px;background:var(--white);padding:8px 16px;font-size:20px;max-width:560px}
+.me{align-self:flex-end;max-width:520px;border-radius:20px 20px 4px 20px;padding:8px 16px;font-size:20px;background:var(--ink);color:var(--paper);display:flex;align-items:center;gap:16px}
+.me button{font-size:13px;border-color:var(--paper);background:transparent;color:var(--paper);border-radius:999px;padding:0 8px;border-width:1.5px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-left:80px}
+.chips button{font-size:20px;padding:8px 16px}
+.msg,.me,.chips{animation:rise .35s ease}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* 書きなおし */
+.rewrite textarea{width:100%;min-height:240px;border:2px solid var(--ink);border-radius:var(--r);padding:24px;font-size:28px;line-height:1.85;background:var(--white);resize:vertical}
+.rewrite .row{display:flex;gap:16px;margin-top:16px;flex-wrap:wrap}
+.rewrite .row button{font-size:20px;font-weight:700;padding:8px 24px}
+
+/* ためた文 */
+.sorts{display:flex;gap:8px;margin-bottom:24px;align-items:center;flex-wrap:wrap}
+.sorts span{color:var(--mute);margin-right:8px}
+.sorts button{border-radius:999px;padding:4px 16px}
+.sorts button.on{background:var(--ink);color:var(--paper)}
+.saved{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.saved button{text-align:left;padding:16px;display:flex;flex-direction:column;gap:8px}
+.saved .meta{display:flex;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--mute);font-weight:700}
+.saved .meta i{font-style:normal;display:flex;align-items:center;gap:4px}
+.saved .meta i::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--fc,var(--line))}
+.saved .txt{font-size:20px;line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.empty{color:var(--mute);border:2px dashed var(--line);border-radius:var(--r);padding:40px;text-align:center}
+dialog{border:2px solid var(--ink);border-radius:var(--r);padding:24px;max-width:720px;width:calc(100% - 32px);background:var(--paper);color:var(--ink)}
+dialog::backdrop{background:rgba(43,33,24,.4)}
+dialog .txt{font-size:24px;line-height:1.85;white-space:pre-wrap;margin:16px 0 24px}
+dialog .row{display:flex;gap:8px;flex-wrap:wrap}
+dialog .row .sp{flex:1}
+
+/* せってい */
+.setting{display:grid;grid-template-columns:200px 1fr;gap:16px 24px;align-items:center;max-width:760px}
+.setting h3{margin:0;font-size:20px}
+.setting .opts{display:flex;gap:8px;flex-wrap:wrap}
+.setting .opts button{border-radius:999px;padding:8px 24px;font-size:16px}
+.setting .opts button.on{background:var(--ink);color:var(--paper)}
+.setting p{grid-column:2;margin:-8px 0 8px;color:var(--mute);font-size:13px}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:8px 24px;border-radius:999px;opacity:0;transition:.2s;pointer-events:none;z-index:9}
+.toast.show{opacity:1}
+
+@media (max-width:820px){
+  main{padding:16px}
+  .bar{padding:0 16px}
+  .bar .crumb{display:none}
+  .title .big{grid-template-columns:1fr;max-width:320px;margin:0 auto}
+  .title .lions{height:110px;gap:16px}
+  .title h1{font-size:32px}
+  .ask{grid-template-columns:72px 1fr;gap:16px;margin-bottom:24px}
+  .ask .lion{height:72px}
+  .ask h2{font-size:20px}
+  .tiles.s4,.tiles.s5{grid-template-columns:1fr 1fr}
+  .tiles button{padding:16px 8px;font-size:16px}
+  .now{font-size:20px}
+  .own textarea,.rewrite textarea{font-size:20px}
+  .craft .top{grid-template-columns:1fr;gap:16px}
+  .craft .acts{flex-direction:row}
+  .bench{grid-template-columns:repeat(3,1fr);gap:8px;margin:24px 0}
+  .slot{min-height:80px;padding:8px}
+  .slot .val{font-size:13px}
+  .tray{grid-template-columns:56px 1fr;gap:16px}
+  .tray .lion{height:56px}
+  .tray h3,.note .asking h3{font-size:20px}
+  .cardgrid,.note .cardgrid{grid-template-columns:1fr}
+  .cardgrid button,.meter button{font-size:16px;padding:8px 16px}
+  .meter{grid-template-columns:1fr 1fr;gap:8px}
+  .note,.chatv{grid-template-columns:1fr;gap:24px}
+  .note .asking{grid-template-columns:56px 1fr}
+  .note .asking .lion{height:56px}
+  .chat{max-height:none;overflow:visible}
+  .msg{grid-template-columns:48px 1fr;gap:8px}
+  .msg .lion{height:52px}
+  .msg .bub,.me,.chips button{font-size:16px}
+  .chips{margin-left:0}
+  .saved{grid-template-columns:1fr}
+  .setting{grid-template-columns:1fr}
+  .setting p{grid-column:1}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<dialog id="dlg"></dialog>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="common/lions.js"></script>
+<script src="data.js"></script>
+<script>
+const D = window.KC_DATA;
+const FEELS = D.feels.map((f) => f.name);
+const FEEL_COLOR = ["#f2a516", "#ef7457", "#5b7fd6", "#e0559a", "#3fae7a"];
+const FEEL_SOFT = ["#fdeccb", "#fde3da", "#e2e9fa", "#fbe0ee", "#dcf3e8"];
+const PARTS = [
+  { key: "karada", t: "K", label: "からだ", q: "からだは どう なった？" },
+  { key: "mieta", t: "M", label: "見えた・聞こえた", q: "何が 見えた？ 聞こえた？" },
+  { key: "koe", t: "C", label: "心の声", q: "心の 中で 何て 言った？" },
+  { key: "tatoe", t: "T", label: "たとえ", q: "たとえると、どんな かんじ？" },
+];
+const PRAISE = [
+  "カードを えらぶと、文が そだつよ。",
+  "いいね！ ようすが 目に うかぶよ。",
+  "どんどん くわしく なってきた！",
+  "読んでいる 人も 気持ちが つたわりそう！",
+  "すごい！ 作文の 名人みたいだよ！",
+];
+const KEY = "kotoba-craft-v1";
+
+/* ---------- ほぞん（この端末のブラウザだけに のこる） ---------- */
+function loadStore() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.settings) return s; } catch (e) {}
+  return { settings: { look: "craft", ruby: true }, saved: [] };
+}
+let store = loadStore();
+function saveStore() { try { localStorage.setItem(KEY, JSON.stringify(store)); return true; } catch (e) { return false; } }
+
+/* ---------- 文字 ---------- */
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const plain = (s) => String(s).replace(/《[^》]*》/g, "");
+// 漢字《よみ》 を ふりがなに する。ふりがな なしの せってい では よみを 消す。
+const rb = (s) => store.settings.ruby
+  ? esc(s).replace(/([一-鿿々]+)《([^》]+)》/g, "<ruby>$1<rt>$2</rt></ruby>")
+  : esc(plain(s));
+const fullOf = (c) => c.full || c.card;
+const feelIdx = (f) => Math.max(0, FEELS.indexOf(f));
+
+/* ---------- いま つくっている 文 ---------- */
+let S = null;
+function newSession(o) {
+  S = Object.assign({ scene: null, feel: null, own: null, parts: { karada: null, mieta: null, koe: null, tatoe: null },
+    level: 1, levelSet: false, answered: {}, open: "karada", last: null }, o);
+  const i = feelIdx(S.feel);
+  document.documentElement.style.setProperty("--feel", FEEL_COLOR[i]);
+  document.documentElement.style.setProperty("--feel-soft", FEEL_SOFT[i]);
+}
+const levels = () => D.cards.filter((c) => c.t === "S" && c.feel === S.feel);
+function opening() {
+  return D.cards.find((c) => c.t === "H" && c.feel === S.feel && c.scene === (S.scene || D.common))
+    || D.cards.find((c) => c.t === "H" && c.feel === S.feel && c.scene === D.common);
+}
+function cardsFor(key) {
+  if (key === "mieta") {
+    const sc = S.scene ? D.cards.filter((c) => c.t === "N" && c.scene === S.scene && (!c.match.length || c.match.includes(S.feel))) : [];
+    const gen = D.cards.filter((c) => c.t === "M" && c.feel === S.feel);
+    // カードは5まいまで（「つかわない」と あわせて 2だんに おさまる）
+    return sc.slice(0, 3).concat(gen).slice(0, 5);
+  }
+  const t = PARTS.find((p) => p.key === key).t;
+  return D.cards.filter((c) => c.t === t && c.feel === S.feel);
+}
+const chosenCount = () => PARTS.filter((p) => S.parts[p.key]).length;
+
+// 自分の文から：さいごの「うれしかったです」などを とって、はじまりに つかう
+const FEEL_WORDS = [/うれし|嬉し/, /楽し|たのし/, /くやし|悔し/, /ドキドキ|どきどき|きんちょう|緊張/, /ほっと|安心|あんしん/];
+function detectFeel(s) { const i = FEEL_WORDS.findIndex((re) => re.test(s)); return i < 0 ? null : FEELS[i]; }
+function ownOpening(s) {
+  const t = s.trim().replace(/[。．.！!]+$/, "");
+  const m = t.match(/^(.+?)[、,\s]*(?:とても|すごく|とっても|少し|すこし|ちょっと|めちゃくちゃ)?\s*(?:うれし|嬉し|楽し|たのし|くやし|悔し|ドキドキ|どきどき|きんちょう|緊張|ほっと|安心|あんしん)[^、。]*$/);
+  if (m && m[1].trim().length >= 2) return { opening: m[1].trim() + "、", pre: null };
+  return { opening: null, pre: t + "。" };
+}
+
+// えらんだ 部品から 文を くみたてる。ならびは いつも 同じ。
+function segments() {
+  const out = [];
+  const lv = levels()[S.level];
+  const k = S.parts.karada;
+  let op = opening().card;
+  if (S.own) {
+    const o = ownOpening(S.own);
+    if (o.opening) op = o.opening; else out.push({ p: "hajime", t: o.pre });
+  }
+  out.push({ p: "hajime", t: op });
+  out.push({ p: k ? "karada" : "kimochi", t: fullOf(k || lv) + "。" });
+  ["mieta", "koe", "tatoe"].forEach((key) => { if (S.parts[key]) out.push({ p: key, t: fullOf(S.parts[key]) + "。" }); });
+  if (k) out.push({ p: "kimochi", t: fullOf(lv) + "。" });
+  return out;
+}
+const sentenceText = () => segments().map((g) => plain(g.t)).join("");
+const nowClass = () => { const n = sentenceText().length; return n > 110 ? "now k xlong" : n > 80 ? "now k long" : "now k"; };
+const sentenceHTML = () => segments().map((g) =>
+  `<span class="seg p-${g.p}${g.p === S.last ? " new" : ""}" style="--pc:var(--p-${g.p})">${rb(g.t)}</span>`).join("");
+function beforeText() {
+  if (S.own) return S.own;
+  const sc = S.scene ? D.scenes.find((x) => x.name === S.scene).before : D.commonBefore;
+  return sc + "、" + D.feels[feelIdx(S.feel)].before + "。";
+}
+
+/* ---------- 画面の きりかえ ---------- */
+let view = "title", listSort = "new";
+const $ = (id) => document.getElementById(id);
+const L = (k, m) => `<span class="lion">${Lions.svg(k, m)}</span>`;
+function go(v) { view = v; render(); window.scrollTo(0, 0); }
+function bar(crumb, back) {
+  return `<header class="bar"><button class="home" onclick="${back || "go('title')"}">◀ ${back ? "もどる" : "ことばクラフト"}</button>
+    <span class="crumb">${crumb || ""}</span><span class="sp"></span>
+    <button class="ic" onclick="go('saved')">ためた 文</button><button class="ic" onclick="go('settings')">せってい</button></header>`;
+}
+function leaveCraft() {
+  if (S && chosenCount() && !confirm("とちゅうの 文は きえて しまうけど、もどって いい？")) return;
+  go("title");
+}
+function toast(t) { const el = $("toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("show"), 1800); }
+async function copyText(t) {
+  try { await navigator.clipboard.writeText(t); toast("コピーしたよ"); return; } catch (e) {}
+  // Canva の中などで つかえない ときの かわり
+  const ta = document.createElement("textarea"); ta.value = t; document.body.appendChild(ta); ta.select();
+  let ok = false; try { ok = document.execCommand("copy"); } catch (e) {}
+  ta.remove(); toast(ok ? "コピーしたよ" : "コピーできなかったよ。文を えらんで コピーしてね");
+}
+
+/* ---------- タイトル ---------- */
+function vTitle() {
+  return `<div class="title"><div>
+    <div class="lions">${L("hana", "happy")}${L("niji", "normal")}</div>
+    <h1 class="k" aria-label="ことばクラフト">${[..."ことばクラフト"].map((ch, i) => `<span aria-hidden="true" style="--i:${i}">${ch}</span>`).join("")}</h1>
+    <p>らいおんと いっしょに、作文の 文を そだてよう</p>
+    <div class="big">
+      <button onclick="go('scene')">ばめんから<small>運動会・遠足 など</small></button>
+      <button onclick="startFeel()">きもちから<small>うれしい・くやしい など</small></button>
+      <button onclick="go('own')">じぶんの 文から<small>書いた 文を 入れる</small></button>
+    </div>
+    <div class="small"><button onclick="go('saved')">ためた 文（${store.saved.length}）</button><button onclick="go('settings')">せってい</button>
+      <button onclick="location.href='https://sunny-lotus.github.io/manabi-portal/'">まなびひろばへ</button></div>
+  </div></div>`;
+}
+
+/* ---------- 場面・気持ち・自分の文 ---------- */
+function vScene() {
+  return bar("ばめんから") + `<main>
+    <div class="ask">${L("hana", "normal")}<div><h2 class="k">どんな ときの ことを 書く？</h2><p>いちばん 近い ものを えらんでね。</p></div></div>
+    <div class="tiles s4">${D.scenes.map((s, i) => `<button onclick="pickScene(${i})">${esc(s.name)}</button>`).join("")}</div></main>`;
+}
+let pending = { scene: null, own: null, guess: null };
+function pickScene(i) { pending = { scene: D.scenes[i].name, own: null, guess: null }; go("feel"); }
+function startFeel() { pending = { scene: null, own: null, guess: null }; go("feel"); }
+function vFeel() {
+  const title = pending.own ? (pending.guess ? `「${pending.guess}」 気持ちかな？` : "どの 気持ちに 近い？") : "そのとき、どんな 気持ちだった？";
+  const sub = pending.own ? "ちがったら、近い 気持ちを えらんでね。" : (pending.scene ? `ばめん：${esc(pending.scene)}` : "いちばん 近い 気持ちを えらんでね。");
+  return bar(pending.own ? "じぶんの 文から" : (pending.scene ? "ばめんから" : "きもちから"), pending.scene ? "go('scene')" : (pending.own ? "go('own')" : null)) + `<main>
+    <div class="ask">${L("hana", pending.own && !pending.guess ? "think" : "normal")}<div><h2 class="k">${esc(title)}</h2><p>${sub}</p></div></div>
+    <div class="tiles s5">${FEELS.map((f, i) => `<button class="${pending.guess === f ? "pre" : ""}" style="--fc:${FEEL_COLOR[i]};--fs:${FEEL_SOFT[i]}" onclick="pickFeel(${i})"><span class="dot"></span>${esc(f)}</button>`).join("")}</div></main>`;
+}
+function pickFeel(i) {
+  newSession({ scene: pending.scene, own: pending.own, feel: FEELS[i] });
+  go("craft");
+}
+function vOwn() {
+  return bar("じぶんの 文から") + `<main class="own">
+    <div class="ask">${L("hana", "normal")}<div><h2 class="k">作文に 書いた 文を 入れてね</h2><p>れい：運動会の リレーで 一位に なって、うれしかったです。</p></div></div>
+    <textarea id="ownIn" class="k" maxlength="200" placeholder="ここに 文を 入れる">${esc(pending.own || "")}</textarea>
+    <div class="row"><button class="dark" onclick="ownNext()">つぎへ</button></div></main>`;
+}
+function ownNext() {
+  const t = $("ownIn").value.trim();
+  if (!t) { toast("文を 入れてね"); return; }
+  pending = { scene: null, own: t, guess: detectFeel(t) };
+  go("feel");
+}
+
+/* ---------- 文を そだてる（3つの すがた） ---------- */
+function choose(key, id) {
+  const c = D.cards.find((x) => x.id === id);
+  S.parts[key] = S.parts[key] && S.parts[key].id === id ? null : c;
+  S.answered[key] = true; S.last = key;
+  render();
+}
+function skip(key) { S.parts[key] = null; S.answered[key] = true; S.last = null; render(); }
+function setLevel(i) { S.level = i; S.levelSet = true; S.last = "kimochi"; render(); }
+function openPart(k) { S.open = k; S.last = null; render(); }
+const cardBtn = (key, c) => `<button class="k ${S.parts[key] && S.parts[key].id === c.id ? "on" : ""}" onclick="choose('${key}','${c.id}')">${rb(c.card)}${c.hard ? '<span class="hard">ちょっと むずかしい</span>' : ""}</button>`;
+const meterHTML = () => `<div class="meter">${levels().map((c, i) =>
+  `<button class="k ${i === S.level ? "on" : ""}" onclick="setLevel(${i})"><small>${"●".repeat(i + 1)}${"○".repeat(3 - i)}</small>${rb(c.card)}</button>`).join("")}</div>`;
+const actsHTML = () => `<div class="acts"><button class="dark" onclick="go('rewrite')">ためる</button><button onclick="copyText(sentenceText())">コピー</button></div>`;
+const beforeHTML = () => `<p class="bef"><b>まえ</b>${rb(beforeText())}</p>`;
+function choicesHTML(key) {
+  if (key === "kimochi") return meterHTML();
+  return `<div class="cardgrid">${cardsFor(key).map((c) => cardBtn(key, c)).join("")}<button class="ghost" onclick="skip('${key}')">つかわない</button></div>`;
+}
+const qOf = (key) => key === "kimochi" ? `どのくらい ${S.feel === "ドキドキ" ? "ドキドキした" : S.feel === "ほっとした" ? "ほっとした" : plain(levels()[1].card)}？` : PARTS.find((p) => p.key === key).q;
+const lionFor = (key) => key === "kimochi" ? L("hana", chosenCount() >= 3 ? "happy" : "normal") : L("niji", "normal");
+
+function vCraft() {
+  const look = store.settings.look;
+  const crumb = (S.scene ? S.scene + "・" : "") + S.feel;
+  const body = look === "note" ? lookNote() : look === "chat" ? lookChat() : lookCraft();
+  return bar(crumb, "leaveCraft()") + `<main>${body}</main>`;
+}
+function lookCraft() {
+  const slots = [{ key: "hajime", label: "はじまり", lock: 1, val: segments()[0].t }]
+    .concat(PARTS.map((p) => ({ key: p.key, label: p.label, val: S.parts[p.key] && S.parts[p.key].card })))
+    .concat([{ key: "kimochi", label: "気持ちの つよさ", val: levels()[S.level].card }]);
+  return `<div class="craft">
+    <section class="top"><div>${beforeHTML()}<div class="${nowClass()}">${sentenceHTML()}</div></div>${actsHTML()}</section>
+    <div class="bench">${slots.map((s) => `<button class="slot ${s.val ? "" : "empty"} ${s.key === S.open ? "open" : ""} ${s.lock ? "lock" : ""}" style="--pc:var(--p-${s.key})" ${s.lock ? "disabled" : `onclick="openPart('${s.key}')"`}>
+      <span class="nm">${s.label}</span>${s.val ? `<span class="val k">${rb(s.val)}</span>` : '<span class="plus">＋ たす</span>'}</button>`).join("")}</div>
+    <section class="tray">${lionFor(S.open)}<div><h3 class="k">${qOf(S.open)}</h3><p class="praise">${PRAISE[chosenCount()]}</p>${choicesHTML(S.open)}</div></section>
+  </div>`;
+}
+function lookNote() {
+  const tabs = PARTS.map((p) => ({ key: p.key, label: p.label, done: !!S.parts[p.key] })).concat([{ key: "kimochi", label: "気持ちの つよさ", done: S.levelSet }]);
+  return `<div class="note">
+    <section class="paper">${beforeHTML()}<div class="${nowClass()}">${sentenceHTML()}</div>${actsHTML()}</section>
+    <section><div class="asking">${lionFor(S.open)}<div><h3 class="k">${qOf(S.open)}</h3><p class="praise">${PRAISE[chosenCount()]}</p></div></div>
+      <div class="tabs">${tabs.map((t) => `<button style="--pc:var(--p-${t.key})" class="${t.key === S.open ? "on" : ""} ${t.done ? "done" : ""}" onclick="openPart('${t.key}')">${t.label}</button>`).join("")}</div>
+      ${choicesHTML(S.open)}</section>
+  </div>`;
+}
+// 会話：気持ちの つよさ → からだ → 見えた・聞こえた → 心の声 → たとえ の じゅんに 聞く
+const CHAT_STEPS = ["kimochi"].concat(PARTS.map((p) => p.key));
+const answeredStep = (k) => k === "kimochi" ? S.levelSet : !!S.answered[k];
+function redo(k) { if (k === "kimochi") S.levelSet = false; else { S.answered[k] = false; S.parts[k] = null; } S.last = null; render(); }
+function lookChat() {
+  const intro = S.scene ? `${esc(S.scene)}の ことを 書くんだね。` : S.own ? "書いた 文を そだてよう。" : "";
+  let h = `<div class="msg">${L("hana", "happy")}<div class="bub k">${intro} いっしょに 文を そだてよう！</div></div>`;
+  let current = null;
+  for (const k of CHAT_STEPS) {
+    if (current) break;
+    h += `<div class="msg">${lionFor(k)}<div class="bub k">${qOf(k)}</div></div>`;
+    if (answeredStep(k)) {
+      const v = k === "kimochi" ? levels()[S.level].card : (S.parts[k] ? S.parts[k].card : null);
+      h += `<div class="me k">${v ? rb(v) : "（とばす）"}<button onclick="redo('${k}')">えらびなおす</button></div>`;
+    } else {
+      current = k;
+      h += `<div class="chips">${k === "kimochi"
+        ? levels().map((c, i) => `<button class="k" onclick="setLevel(${i})">${rb(c.card)}</button>`).join("")
+        : cardsFor(k).map((c) => `<button class="k" onclick="choose('${k}','${c.id}')">${rb(c.card)}${c.hard ? '<span class="hard">ちょっと むずかしい</span>' : ""}</button>`).join("") + `<button class="ghost" onclick="skip('${k}')">とばす</button>`}</div>`;
+    }
+  }
+  if (!current) h += `<div class="msg">${L("hana", "happy")}<div class="bub k">できた！ 左の 文を 読んでみて。${PRAISE[chosenCount()]}<br>よければ「ためる」を おしてね。</div></div>`;
+  return `<div class="chatv">
+    <section class="pin paper">${beforeHTML()}<div class="${nowClass()}">${sentenceHTML()}</div>${actsHTML()}</section>
+    <section class="chat" id="chat">${h}</section></div>`;
+}
+
+/* ---------- 書きなおして ためる ---------- */
+let justSaved = false;
+function vRewrite() {
+  if (justSaved) {
+    return bar("ためたよ") + `<main><div class="ask">${L("hana", "happy")}<div><h2 class="k">ためたよ！ すてきな 文に なったね。</h2><p>「ためた 文」から いつでも 見られるよ。</p></div></div>
+      <div class="acts"><button class="dark" onclick="justSaved=false;go('saved')">ためた 文を 見る</button><button onclick="justSaved=false;go('title')">もう 一つ つくる</button></div></main>`;
+  }
+  return bar("書きなおす", "go('craft')") + `<main class="rewrite">
+    <div class="ask">${L("hana", "idea")}<div><h2 class="k">自分の ことばも 足してみよう</h2><p>名前や 色、音など、そのときの ことを 書きたすと、もっと つたわるよ。</p></div></div>
+    <textarea id="rw" class="k" maxlength="600">${esc(sentenceText())}</textarea>
+    <div class="row"><button class="dark" onclick="saveNow()">これで ためる</button><button onclick="copyText($('rw').value)">コピー</button></div></main>`;
+}
+function saveNow() {
+  const text = $("rw").value.trim();
+  if (!text) { toast("文が からっぽだよ"); return; }
+  store.saved.unshift({ id: Date.now(), date: new Date().toISOString(), scene: S.scene || (S.own ? "じぶんの 文" : ""), feel: S.feel, text });
+  if (!saveStore()) { toast("この 画面では ためられなかったよ。コピーして のこしてね"); return; }
+  justSaved = true; render();
+}
+
+/* ---------- ためた 文 ---------- */
+function vSaved() {
+  const sorted = store.saved.slice();
+  const sceneOrder = (x) => { const i = D.scenes.findIndex((s) => s.name === x.scene); return i < 0 ? 99 : i; };
+  if (listSort === "scene") sorted.sort((a, b) => sceneOrder(a) - sceneOrder(b) || b.id - a.id);
+  else if (listSort === "feel") sorted.sort((a, b) => feelIdx(a.feel) - feelIdx(b.feel) || b.id - a.id);
+  else sorted.sort((a, b) => b.id - a.id);
+  const sortBtn = (k, t) => `<button class="${listSort === k ? "on" : ""}" onclick="listSort='${k}';render()">${t}</button>`;
+  const fmt = (d) => { const x = new Date(d); return `${x.getMonth() + 1}月${x.getDate()}日`; };
+  return bar("ためた 文") + `<main>
+    <div class="sorts"><span>ならびかえ</span>${sortBtn("new", "あたらしい じゅん")}${sortBtn("scene", "ばめん")}${sortBtn("feel", "気持ち")}</div>
+    ${sorted.length ? `<div class="saved">${sorted.map((x) => `<button onclick="openSaved(${x.id})">
+      <span class="meta"><i style="--fc:${FEEL_COLOR[feelIdx(x.feel)]}">${esc(x.feel)}</i>${x.scene ? `<span>${esc(x.scene)}</span>` : ""}<span>${fmt(x.date)}</span></span>
+      <span class="txt k">${esc(x.text)}</span></button>`).join("")}</div>`
+      : `<div class="empty">まだ ためた 文は ないよ。文を そだてて「ためる」を おしてね。</div>`}</main>`;
+}
+function openSaved(id) {
+  const x = store.saved.find((s) => s.id === id);
+  const d = $("dlg");
+  d.innerHTML = `<div class="saved"><span class="meta"><i style="--fc:${FEEL_COLOR[feelIdx(x.feel)]}">${esc(x.feel)}</i>${x.scene ? `<span>${esc(x.scene)}</span>` : ""}</span></div>
+    <div class="txt k">${esc(x.text)}</div>
+    <div class="row"><button class="dark" onclick="copyText(store.saved.find(s=>s.id===${id}).text)">コピー</button><span class="sp"></span>
+      <button onclick="delSaved(${id})">けす</button><button onclick="$('dlg').close()">とじる</button></div>`;
+  d.showModal();
+}
+function delSaved(id) {
+  if (!confirm("この 文を けすと、もとに もどせないよ。けして いい？")) return;
+  store.saved = store.saved.filter((s) => s.id !== id); saveStore();
+  $("dlg").close(); render();
+}
+
+/* ---------- せってい ---------- */
+function vSettings() {
+  const st = store.settings;
+  const opt = (k, v, t) => `<button class="${st[k] === v ? "on" : ""}" onclick="store.settings.${k}=${JSON.stringify(v)};saveStore();render()">${t}</button>`;
+  return bar("せってい", S ? "go('craft')" : null) + `<main>
+    <div class="setting">
+      <h3>がめんの すがた</h3><div class="opts">${opt("look", "craft", "クラフト")}${opt("look", "note", "ノート")}${opt("look", "chat", "会話")}</div>
+      <p>とちゅうで かえても、そだてた 文は そのまま のこるよ。</p>
+      <h3>ふりがな</h3><div class="opts">${opt("ruby", true, "あり")}${opt("ruby", false, "なし")}</div>
+      <p>文と カードの 漢字に ふりがなを つけるよ。</p>
+    </div>
+    ${S ? `<p style="margin-top:40px"><button class="dark" onclick="go('craft')">文に もどる</button></p>` : ""}</main>`;
+}
+
+/* ---------- 表示 ---------- */
+function render() {
+  const v = { title: vTitle, scene: vScene, feel: vFeel, own: vOwn, craft: vCraft, rewrite: vRewrite, saved: vSaved, settings: vSettings }[view];
+  $("app").innerHTML = v();
+  const chat = $("chat");
+  if (chat) chat.scrollTop = chat.scrollHeight;
+}
+render();
+</script>
+</body>
+</html>
