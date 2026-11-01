@@ -1,10 +1,11 @@
 <!doctype html>
 <html lang="ja">
 <head>
+<!-- このファイルだけで 開ける版。らいおんの絵と ことばは 公開中の ことばクラフトから 読みこむ（ネットが いる） -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>ことばクラフト｜らいおんと そだてる さくぶん</title>
+<title>ことばクラフト</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
@@ -230,8 +231,8 @@ dialog .row .sp{flex:1}
 <dialog id="dlg"></dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script src="common/lions.js"></script>
-<script src="data.js"></script>
+<script src="https://sunny-lotus.github.io/kotoba-craft/common/lions.js"></script>
+<script src="https://sunny-lotus.github.io/kotoba-craft/data.js"></script>
 <script>
 const D = window.KC_DATA;
 const FEELS = D.feels.map((f) => f.name);
@@ -360,7 +361,7 @@ function vTitle() {
   return `<div class="title"><div>
     <div class="lions">${L("hana", "happy")}${L("niji", "normal")}</div>
     <h1 class="k" aria-label="ことばクラフト">${[..."ことばクラフト"].map((ch, i) => `<span aria-hidden="true" style="--i:${i}">${ch}</span>`).join("")}</h1>
-    <p>らいおんと そだてる さくぶん</p>
+    <p>らいおんと いっしょに、作文の 文を そだてよう</p>
     <div class="big">
       <button onclick="go('scene')">ばめんから<small>運動会・遠足 など</small></button>
       <button onclick="startFeel()">きもちから<small>うれしい・くやしい など</small></button>
