@@ -1,0 +1,13 @@
+{
+  "seconds": 40,
+  "bytes": 641610,
+  "peak": 0.22141949832439423,
+  "rms": 0.03978152573108673,
+  "boundaryJump": 0.0004394755233079195,
+  "sha256": "31bc0cef9a60e02701478b7001137579aa400197367582f636c1fff7b7f27fde",
+  "stringsRelativeToPianoDb": -20.97528041362869,
+  "phraseGainRangeDb": 5.603597133817221,
+  "sitePublished": true,
+  "adoptedOn": "2026-11-02",
+  "matchesApprovedPreview": true
+}

@@ -242,7 +242,7 @@ dialog .row .sp{flex:1}
   <details><summary>音量</summary><div class="sound-volumes">
   <label for="volume-bgm">BGM <output id="value-bgm">18%</output></label><input id="volume-bgm" type="range" min="0" max="100" value="18">
   <label for="volume-se">効果音 <output id="value-se">32%</output></label><input id="volume-se" type="range" min="0" max="100" value="32">
-  <small>BGM「ことばのアトリエ」。ピアノ：<a href="https://freepats.zenvoid.org/Piano/acoustic-grand-piano.html" target="_blank" rel="noopener">FreePats</a>、木の響き：VCSL、効果音：Kenney（CC0）。<a href="https://github.com/sunny-lotus/kotoba-craft/blob/main/docs/audio/SPEC.md" target="_blank" rel="noopener">音の仕様・制作記録</a></small></div></details></div>
+  <small>BGM「ことばのアトリエ」第6版。ピアノ：<a href="https://freepats.zenvoid.org/Piano/acoustic-grand-piano.html" target="_blank" rel="noopener">FreePats</a>、弦：VSCO 2 CE、効果音：Kenney（CC0）。<a href="https://github.com/sunny-lotus/kotoba-craft/blob/main/docs/audio/SPEC.md" target="_blank" rel="noopener">音の仕様・制作記録</a></small></div></details></div>
   <p id="sound-status" role="status">音を出すときは ONにしてね。</p>
 </section>
 <div id="app"></div>
@@ -648,7 +648,7 @@ const kotobaSound = (() => {
       if (e.bgmBuffer) return true;
       if (!e.bgmLoad) e.bgmLoad = (async () => {
         try {
-          const response = await fetch('common/audio/kotoba-atelier-v1.mp3');
+          const response = await fetch('common/audio/kotoba-atelier-v6.mp3');
           if (!response.ok) throw Error('ことばの音楽を読み込めませんでした');
           const buffer = await e.context.decodeAudioData(await response.arrayBuffer());
           if (!Number.isFinite(buffer.duration) || buffer.duration < 39.95) throw Error('ことばの音楽が短すぎます');
@@ -840,4 +840,5 @@ render();
 </script>
 </body>
 </html>
+
 
