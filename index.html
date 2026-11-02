@@ -224,9 +224,27 @@ dialog .row .sp{flex:1}
   .setting{grid-template-columns:1fr}
   .setting p{grid-column:1}
 }
+.sound-bar{position:relative;z-index:6;background:rgba(251,247,240,.96);padding:8px 16px;border-bottom:1px solid var(--line);font-size:13px}
+.sound-buttons{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;max-width:1240px;margin:auto}
+.sound-buttons button{padding:4px 12px;min-height:40px;border-radius:999px;font-size:13px;font-weight:700}
+.sound-buttons button[aria-pressed="true"]{background:var(--feel-soft)}
+.sound-bar details{position:relative}.sound-bar summary{cursor:pointer;padding:8px;min-height:40px}
+.sound-volumes{position:absolute;right:0;top:100%;width:min(290px,85vw);padding:16px;background:var(--paper);border:2px solid var(--ink);border-radius:14px;box-shadow:0 4px 12px #0002;display:grid;grid-template-columns:1fr;gap:8px}
+.sound-volumes label{display:flex;justify-content:space-between}.sound-volumes input{width:100%;min-height:28px;accent-color:var(--feel)}
+.sound-volumes small{font-size:11px;line-height:1.6}.sound-bar p{margin:0;max-width:1240px;margin-inline:auto;text-align:right;font-size:11px;color:var(--mute)}
+@media(max-width:480px){.sound-bar{padding:4px 12px}.sound-buttons{gap:6px}.sound-bar p{text-align:center}}
+
 </style>
 </head>
 <body>
+<section class="sound-bar" aria-label="音のせってい">
+  <div class="sound-buttons"><span aria-hidden="true">♫</span><button type="button" id="sound-bgm" aria-pressed="false">BGM OFF</button><button type="button" id="sound-se" aria-pressed="false">効果音 OFF</button>
+  <details><summary>音量</summary><div class="sound-volumes">
+  <label for="volume-bgm">BGM <output id="value-bgm">18%</output></label><input id="volume-bgm" type="range" min="0" max="100" value="18">
+  <label for="volume-se">効果音 <output id="value-se">32%</output></label><input id="volume-se" type="range" min="0" max="100" value="32">
+  <small>BGM「ことばのアトリエ」。ピアノ：<a href="https://freepats.zenvoid.org/Piano/acoustic-grand-piano.html" target="_blank" rel="noopener">FreePats</a>、木の響き：VCSL、効果音：Kenney（CC0）。<a href="https://github.com/sunny-lotus/kotoba-craft/blob/main/docs/audio/SPEC.md" target="_blank" rel="noopener">音の仕様・制作記録</a></small></div></details></div>
+  <p id="sound-status" role="status">音を出すときは ONにしてね。</p>
+</section>
 <div id="app"></div>
 <dialog id="dlg"></dialog>
 <div class="toast" id="toast" role="status"></div>
@@ -552,7 +570,274 @@ function render() {
   const chat = $("chat");
   if (chat) chat.scrollTop = chat.scrollHeight;
 }
+const kotobaSound = (() => {
+  const key = "kotoba-craft-sound-v1";
+  const clampVolume = (n, fallback) => Number.isFinite(n) ? Math.max(0, Math.min(100, n)) : fallback;
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(key)) || {}; } catch (_) {}
+  const prefs = {
+    bgm: saved.bgm === true, se: saved.se === true,
+    bgmVolume: clampVolume(saved.bgmVolume, 18), seVolume: clampVolume(saved.seVolume, 32),
+  };
+  let engine = null, timer = null, cursor = 0, nextTime = 0, lastSE = -Infinity;
+  const revisions = { bgm: 0, se: 0 };
+  const requested = { bgm: prefs.bgm, se: prefs.se };
+  const active = { bgm: new Set(), se: new Set() };
+  const melody = [
+    [76,0,79,0,81,0,79,0,76,0,74,0,72,0,0,0],
+    [72,0,76,0,79,0,76,0,74,0,0,0,72,0,0,0],
+    [77,0,81,0,84,0,81,0,79,0,77,0,76,0,0,0],
+    [74,0,79,0,83,0,81,0,79,0,0,0,74,0,0,0],
+    [76,0,81,0,84,0,81,0,79,0,76,0,74,0,0,0],
+    [77,0,81,0,79,0,77,0,76,0,74,0,72,0,0,0],
+    [74,0,77,0,81,0,79,0,77,0,74,0,71,0,0,0],
+    [74,0,79,0,76,0,74,0,72,0,0,0,0,0,0,0],
+  ];
+  const roots = [48,48,41,43,45,41,50,43];
+  const chords = [[60,64,67],[60,64,67],[53,57,60],[55,59,62],[57,60,64],[53,57,60],[62,65,69],[55,59,62]];
+  const stepTime = 60 / 104 / 4;
+  const recordings = [
+    { id:'kotoba-se-select-v1', instrument:'effect', root:0, effect:'select' },
+    { id:'kotoba-se-card-v1', instrument:'effect', root:0, effect:'card' },
+    { id:'kotoba-se-back-v1', instrument:'effect', root:0, effect:'back' },
+    { id:'kotoba-se-save-v1', instrument:'effect', root:0, effect:'save' },
+    { id:'kotoba-se-copy-v1', instrument:'effect', root:0, effect:'copy' },
+    { id:'kotoba-se-retry-v1', instrument:'effect', root:0, effect:'retry' },
+    { id:'glock-c5', instrument:'glock', root:84 },
+  ];
+  let lastWhistle = -Infinity;
+  const status = text => { document.getElementById("sound-status").textContent = text; };
+  function save() { try { localStorage.setItem(key, JSON.stringify(prefs)); } catch (_) {} }
+  function paint() {
+    for (const kind of ["bgm", "se"]) {
+      const button = document.getElementById("sound-" + kind);
+      button.textContent = (kind === "bgm" ? "BGM" : "効果音") + (prefs[kind] ? " ON" : " OFF");
+      button.setAttribute("aria-pressed", String(prefs[kind]));
+      document.getElementById("volume-" + kind).value = prefs[kind + "Volume"];
+      document.getElementById("value-" + kind).textContent = prefs[kind + "Volume"] + "%";
+    }
+  }
+  function audio() {
+    if (engine && engine.context.state !== "closed") return engine;
+    const Audio = window.AudioContext || window.webkitAudioContext;
+    if (!Audio) throw Error("このブラウザでは 音を使えません。");
+    const context = new Audio(), bgm = context.createGain(), se = context.createGain();
+    const filter = context.createBiquadFilter(); filter.type = "lowpass"; filter.frequency.value = 6000;
+    bgm.connect(filter); filter.connect(context.destination); se.connect(context.destination);
+    engine = { context, bgm, se, samples: new Map(), loads: new Map(), bgmPrepared: false, bgmBuffer: null, bgmLoad: null };
+    volume();
+    context.onstatechange = () => {
+      if (context.state !== "running") stopMusic();
+      else if (!document.hidden && prefs.bgm) startMusic();
+    };
+    return engine;
+  }
+  function volume() {
+    if (!engine) return;
+    for (const kind of ["bgm", "se"]) engine[kind].gain.setTargetAtTime(prefs[kind + "Volume"] / 100 * .55, engine.context.currentTime, .025);
+  }
+  async function unlock() {
+    const e = audio();
+    if (e.context.state !== "running") await e.context.resume();
+    if (e.context.state !== "running") throw Error("もう一度 音のボタンを おしてね。");
+    return e;
+  }
+  async function loadRecordings(kind) {
+    const e = engine;
+    if (kind === 'bgm') {
+      if (e.bgmBuffer) return true;
+      if (!e.bgmLoad) e.bgmLoad = (async () => {
+        try {
+          const response = await fetch('common/audio/kotoba-atelier-v1.mp3');
+          if (!response.ok) throw Error('ことばの音楽を読み込めませんでした');
+          const buffer = await e.context.decodeAudioData(await response.arrayBuffer());
+          if (!Number.isFinite(buffer.duration) || buffer.duration < 39.95) throw Error('ことばの音楽が短すぎます');
+          e.bgmBuffer = buffer; return true;
+        } catch (_) { e.bgmLoad = null; return false; }
+        finally { e.bgmPrepared = true; }
+      })();
+      return e.bgmLoad;
+    }
+    const needed = recordings.filter(item => kind === 'bgm' ? item.instrument !== 'whistle' : item.id === 'glock-c5' || Boolean(item.effect));
+    const results = await Promise.allSettled(needed.map(item => {
+      if (e.samples.has(item.id)) return Promise.resolve();
+      if (!e.loads.has(item.id)) {
+        const pending = (async () => {
+          const response = await fetch(item.effect ? 'common/audio/' + item.id + '.wav' : 'https://sunny-lotus.github.io/manabi-portal/common/audio/' + item.id + '.wav');
+          if (!response.ok) throw Error('音源を読み込めませんでした');
+          const buffer = await e.context.decodeAudioData(await response.arrayBuffer());
+          if (!Number.isFinite(buffer.duration) || buffer.duration < .02) throw Error('音源が短すぎます');
+          e.samples.set(item.id, { ...item, buffer });
+        })().catch(error => { e.loads.delete(item.id); throw error; });
+        e.loads.set(item.id, pending);
+      }
+      return e.loads.get(item.id);
+    }));
+    if (kind === 'bgm') e.bgmPrepared = true;
+    return results.every(result => result.status === 'fulfilled');
+  }
+  function recordedNote(instrument, midi, start, duration, level, kind, part = '') {
+    const e = engine, pool = [...e.samples.values()].filter(item => item.instrument === instrument);
+    if (!pool.length) return false;
+    const item = pool.reduce((best, candidate) => Math.abs(candidate.root - midi) < Math.abs(best.root - midi) ? candidate : best);
+    const source = e.context.createBufferSource(), gain = e.context.createGain();
+    const rate = instrument === 'whistle' ? 1 : 2 ** ((midi - item.root) / 12);
+    source.buffer = item.buffer; source.playbackRate.value = rate;
+    const length = Math.min(item.buffer.duration / rate - .003, instrument === 'whistle' ? 2 : Math.max(.25, duration + .22));
+    if (length < .02) return false;
+    const release = Math.min(.16, length / 3), strength = instrument === 'whistle' ? .26 : level * (part === 'bass' || midi < 60 ? 1.6 : 3.2);
+    gain.gain.setValueAtTime(.0001, start); gain.gain.linearRampToValueAtTime(strength, start + .003);
+    gain.gain.setValueAtTime(strength, start + length - release); gain.gain.exponentialRampToValueAtTime(.0001, start + length);
+    source.connect(gain); gain.connect(e[kind]); active[kind].add(source);
+    source.onended = () => { active[kind].delete(source); source.disconnect(); gain.disconnect(); };
+    source.start(start); source.stop(start + length + .002); return true;
+  }
+  function note(midi, start, duration, level, type, kind, part = '') {
+    const e = engine;
+    if (!e || e.context.state !== "running" || document.hidden) return;
+    const instrument = part === 'bass' ? 'marimba' : kind === 'se' ? 'glock' : type === 'square' || (midi < 60 && type === 'triangle') ? 'marimba' : type === 'triangle' && midi < 90 ? 'glock' : null;
+    if (instrument && recordedNote(instrument, midi, start, duration, level, kind, part)) return;
+    const oscillator = e.context.createOscillator(), gain = e.context.createGain();
+    oscillator.type = type; oscillator.frequency.setValueAtTime(440 * 2 ** ((midi - 69) / 12), start);
+    gain.gain.setValueAtTime(0, start);
+    gain.gain.linearRampToValueAtTime(level, start + .008);
+    gain.gain.exponentialRampToValueAtTime(.0001, start + duration);
+    oscillator.connect(gain); gain.connect(e[kind]); active[kind].add(oscillator);
+    oscillator.onended = () => { active[kind].delete(oscillator); oscillator.disconnect(); gain.disconnect(); };
+    oscillator.start(start); oscillator.stop(start + duration + .015);
+  }
+  function stopVoices(kind) {
+    for (const source of active[kind]) { try { source.stop(); } catch (_) {} }
+    active[kind].clear();
+  }
+  function schedule() {
+    if (!engine || engine.context.state !== "running" || document.hidden || !prefs.bgm) { stopMusic(); return; }
+    const now = engine.context.currentTime;
+    if (nextTime < now - .1) nextTime = now + .03;
+    while (nextTime < now + .22) {
+      const bar = Math.floor(cursor / 16) % 8, step = cursor % 16, secondPass = cursor >= 128;
+      const pitch = melody[bar][step];
+      if (pitch) note(pitch, nextTime, stepTime * 1.8, .055, 'square', 'bgm');
+      if (step === 0 || step === 8) note(roots[bar], nextTime, .36, .045, 'triangle', 'bgm', 'bass');
+      if (step === 4 || step === 12) note(chords[bar][step === 4 ? 1 : 2] + 12, nextTime, .16, .018, 'triangle', 'bgm');
+      nextTime += stepTime; cursor = (cursor + 1) % 256;
+    }
+  }
+  function startMusic() {
+    if (timer !== null || !prefs.bgm || !engine || !engine.bgmPrepared || engine.context.state !== "running" || document.hidden) return;
+    if (engine.bgmBuffer) {
+      const source = engine.context.createBufferSource(), gain = engine.context.createGain(), t = engine.context.currentTime + .04;
+      source.buffer = engine.bgmBuffer; source.loop = true; source.loopStart = 0; source.loopEnd = Math.min(40, engine.bgmBuffer.duration);
+      gain.gain.setValueAtTime(.0001, t); gain.gain.linearRampToValueAtTime(1, t + .12);
+      source.connect(gain); gain.connect(engine.bgm); active.bgm.add(source);
+      source.onended = () => { active.bgm.delete(source); source.disconnect(); gain.disconnect(); };
+      source.start(t);
+      timer = window.setInterval(() => { if (document.hidden || !prefs.bgm || engine.context.state !== 'running') stopMusic(); }, 500);
+      return;
+    }
+    cursor = 0; nextTime = engine.context.currentTime + .04;
+    timer = window.setInterval(schedule, 80); schedule();
+  }
+  function stopMusic() {
+    if (timer !== null) window.clearInterval(timer);
+    timer = null; stopVoices("bgm");
+  }
+  function effect(kind = "move") {
+    if (!prefs.se || !engine || engine.context.state !== "running" || document.hidden || (performance.now() - lastSE < 55 && kind !== "save")) return;
+    lastSE = performance.now();
+    if (kind === 'save') stopVoices('se');
+    const recorded = engine.samples.get('kotoba-se-' + (kind === 'confirm' ? 'select' : kind) + '-v1');
+    if (recorded) {
+      const source = engine.context.createBufferSource(), gain = engine.context.createGain(), t = engine.context.currentTime + .01;
+      source.buffer = recorded.buffer;
+      const duration = source.buffer.duration;
+      gain.gain.setValueAtTime(.75, t); gain.gain.setValueAtTime(.75, t + Math.max(.001, duration - .015));
+      gain.gain.linearRampToValueAtTime(.0001, t + duration);
+      source.connect(gain); gain.connect(engine.se); active.se.add(source);
+      source.onended = () => { active.se.delete(source); source.disconnect(); gain.disconnect(); };
+      source.start(t); source.stop(t + duration + .003); return;
+    }
+    const notes = { move:[76], lion:[76,79], correct:[76,79,84], retry:[74,72], material:[79,84], build:[72,76,79,84], place:[79,76], back:[76,72], confirm:[79,84], clear:[72,76,79,84,88] }[kind] || [76];
+    notes.forEach((pitch, i) => note(pitch, engine.context.currentTime + .01 + i * (kind === 'clear' ? .11 : .075), .15, kind === 'retry' ? .055 : .085, 'sine', 'se'));
+  }
+
+  async function enable(kind, wanted) {
+    requested[kind] = wanted;
+    const revision = ++revisions[kind];
+    if (!wanted) {
+      prefs[kind] = false; save(); paint();
+      if (kind === "bgm") stopMusic(); else stopVoices("se");
+      status((kind === "bgm" ? "BGM" : "効果音") + "を OFFにしたよ。"); return;
+    }
+    try {
+      await unlock();
+      const complete = await loadRecordings(kind);
+      if (revision !== revisions[kind]) return;
+      prefs[kind] = true; save(); paint();
+      if (kind === "bgm") startMusic(); else effect("confirm");
+      status(complete ? (kind === "bgm" ? "BGM" : "効果音") + "を ONにしたよ。" : (kind === "se" ? "読み込めなかった効果音は 予備の音で鳴らしているよ。" : "読み込めなかった音は 電子音で鳴らしているよ。"));
+    } catch (error) {
+      if (revision !== revisions[kind]) return;
+      prefs[kind] = false; save(); paint(); status(error.message || "音を ひらけませんでした。");
+      requested[kind] = false;
+    }
+  }
+  let waking = null;
+  function wake() {
+    if (document.hidden || (!prefs.bgm && !prefs.se) || waking) return;
+    waking = unlock().then(async () => { await Promise.all([prefs.bgm ? loadRecordings('bgm') : null, prefs.se ? loadRecordings('se') : null]); startMusic(); }).catch(() => { status("音のボタンを おすと 再開できるよ。"); }).finally(() => { waking = null; });
+  }
+  for (const kind of ["bgm", "se"]) {
+    document.getElementById("sound-" + kind).addEventListener("click", () => enable(kind, !requested[kind]));
+    document.getElementById("volume-" + kind).addEventListener("input", event => {
+      prefs[kind + "Volume"] = clampVolume(Number(event.target.value), 25); volume(); save(); paint();
+    });
+  }
+  document.addEventListener('pointerdown', event => { if (event.isPrimary !== false && !(event.button > 0)) wake(); }, {passive:true});
+  document.addEventListener('keydown', event => { if (!event.repeat) wake(); });
+  function pause() {
+    stopMusic(); stopVoices("se");
+    if (engine && engine.context.state === "running") engine.context.suspend().catch(() => {});
+  }
+  document.addEventListener("visibilitychange", () => { if (document.hidden) pause(); else wake(); });
+  window.addEventListener("pagehide", pause);
+  window.addEventListener("pageshow", () => { if (engine) wake(); });
+  paint();
+  if (prefs.bgm || prefs.se) status("画面を タップすると 音がはじまるよ。");
+  return { enable, effect };
+})();
+
+// Effects follow successful user actions, independent of the three writing views.
+const audioGo = go;
+go = function (v) {
+  const previous = view, result = audioGo(v);
+  if (previous !== view) {
+    const backward = v === 'title' || (previous === 'rewrite' && v === 'craft') || (previous === 'feel' && ['scene','own'].includes(v));
+    kotobaSound.effect(backward ? 'back' : 'select');
+  }
+  return result;
+};
+const audioChoose = choose;
+choose = function (...args) { const result = audioChoose(...args); kotobaSound.effect(S.parts[args[0]] ? 'card' : 'back'); return result; };
+const audioOpenPart = openPart;
+openPart = function (k) { const changed = S.open !== k, result = audioOpenPart(k); if (changed) kotobaSound.effect('select'); return result; };
+const audioSetLevel = setLevel;
+setLevel = function (i) { const changed = !S.levelSet || S.level !== i, result = audioSetLevel(i); if (changed) kotobaSound.effect('card'); return result; };
+const audioSkip = skip;
+skip = function (...args) { const result = audioSkip(...args); kotobaSound.effect('back'); return result; };
+const audioRedo = redo;
+redo = function (...args) { const result = audioRedo(...args); kotobaSound.effect('back'); return result; };
+const audioSaveNow = saveNow;
+saveNow = function (...args) { const count = store.saved.length, result = audioSaveNow(...args); kotobaSound.effect(justSaved && store.saved.length > count ? 'save' : 'retry'); return result; };
+const audioCopyText = copyText;
+copyText = async function (...args) { const result = await audioCopyText(...args); kotobaSound.effect($('toast').textContent === 'コピーしたよ' ? 'copy' : 'retry'); return result; };
+const audioOwnNext = ownNext;
+ownNext = function (...args) { const previous = view, result = audioOwnNext(...args); if (previous === view) kotobaSound.effect('retry'); return result; };
+const audioOpenSaved = openSaved;
+openSaved = function (...args) { const result = audioOpenSaved(...args); kotobaSound.effect('select'); return result; };
+
 render();
 </script>
 </body>
 </html>
+

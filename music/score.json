@@ -1,0 +1,669 @@
+{
+  "title": "ことばのアトリエ",
+  "version": 1,
+  "meter": "3/4",
+  "bpm": 72,
+  "bars": 16,
+  "loopSeconds": 40,
+  "key": "F major / D minor",
+  "barGains": [
+    0.78,
+    0.88,
+    1,
+    0.82,
+    0.85,
+    1,
+    1.12,
+    0.86,
+    0.72,
+    0.82,
+    0.94,
+    0.78,
+    0.84,
+    1,
+    1.08,
+    0.76
+  ],
+  "events": [
+    {
+      "instrument": "piano",
+      "midi": 69,
+      "beat": 0,
+      "hold": 1.2,
+      "gain": 0.36,
+      "pan": -0.05
+    },
+    {
+      "instrument": "piano",
+      "midi": 72,
+      "beat": 1.5,
+      "hold": 1,
+      "gain": 0.36,
+      "pan": -0.05
+    },
+    {
+      "instrument": "piano",
+      "midi": 41,
+      "beat": 0,
+      "hold": 1.8,
+      "gain": 0.18,
+      "pan": 0
+    },
+    {
+      "instrument": "piano",
+      "midi": 57,
+      "beat": 1.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "piano",
+      "midi": 60,
+      "beat": 1.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "piano",
+      "midi": 74,
+      "beat": 3,
+      "hold": 1.8,
+      "gain": 0.36,
+      "pan": -0.05
+    },
+    {
+      "instrument": "piano",
+      "midi": 48,
+      "beat": 3,
+      "hold": 1.8,
+      "gain": 0.18,
+      "pan": 0
+    },
+    {
+      "instrument": "piano",
+      "midi": 55,
+      "beat": 4.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "piano",
+      "midi": 62,
+      "beat": 4.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "wood",
+      "midi": 74,
+      "beat": 5,
+      "hold": 0.45,
+      "gain": 0.055,
+      "pan": 0.2
+    },
+    {
+      "instrument": "piano",
+      "midi": 72,
+      "beat": 6.5,
+      "hold": 1,
+      "gain": 0.36,
+      "pan": -0.05
+    },
+    {
+      "instrument": "piano",
+      "midi": 69,
+      "beat": 8,
+      "hold": 0.75,
+      "gain": 0.36,
+      "pan": -0.05
+    },
+    {
+      "instrument": "piano",
+      "midi": 50,
+      "beat": 6,
+      "hold": 1.8,
+      "gain": 0.18,
+      "pan": 0
+    },
+    {
+      "instrument": "piano",
+      "midi": 57,
+      "beat": 7.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "piano",
+      "midi": 65,
+      "beat": 7.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "piano",
+      "midi": 67,
+      "beat": 9,
+      "hold": 1.8,
+      "gain": 0.36,
+      "pan": -0.05
+    },
+    {
+      "instrument": "piano",
+      "midi": 46,
+      "beat": 9,
+      "hold": 1.8,
+      "gain": 0.18,
+      "pan": 0
+    },
+    {
+      "instrument": "piano",
+      "midi": 58,
+      "beat": 10.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "piano",
+      "midi": 62,
+      "beat": 10.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "wood",
+      "midi": 74,
+      "beat": 11,
+      "hold": 0.45,
+      "gain": 0.055,
+      "pan": 0.2
+    },
+    {
+      "instrument": "piano",
+      "midi": 65,
+      "beat": 12,
+      "hold": 1,
+      "gain": 0.36,
+      "pan": -0.05
+    },
+    {
+      "instrument": "piano",
+      "midi": 67,
+      "beat": 13.5,
+      "hold": 1,
+      "gain": 0.36,
+      "pan": -0.05
+    },
+    {
+      "instrument": "piano",
+      "midi": 43,
+      "beat": 12,
+      "hold": 1.8,
+      "gain": 0.18,
+      "pan": 0
+    },
+    {
+      "instrument": "piano",
+      "midi": 58,
+      "beat": 13.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "piano",
+      "midi": 62,
+      "beat": 13.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "piano",
+      "midi": 69,
+      "beat": 15.5,
+      "hold": 1.5,
+      "gain": 0.36,
+      "pan": -0.05
+    },
+    {
+      "instrument": "piano",
+      "midi": 48,
+      "beat": 15,
+      "hold": 1.8,
+      "gain": 0.18,
+      "pan": 0
+    },
+    {
+      "instrument": "piano",
+      "midi": 55,
+      "beat": 16.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "piano",
+      "midi": 64,
+      "beat": 16.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "wood",
+      "midi": 76,
+      "beat": 17,
+      "hold": 0.45,
+      "gain": 0.055,
+      "pan": 0.2
+    },
+    {
+      "instrument": "piano",
+      "midi": 72,
+      "beat": 18,
+      "hold": 1,
+      "gain": 0.36,
+      "pan": -0.05
+    },
+    {
+      "instrument": "piano",
+      "midi": 69,
+      "beat": 19.5,
+      "hold": 1,
+      "gain": 0.36,
+      "pan": -0.05
+    },
+    {
+      "instrument": "piano",
+      "midi": 41,
+      "beat": 18,
+      "hold": 1.8,
+      "gain": 0.18,
+      "pan": 0
+    },
+    {
+      "instrument": "piano",
+      "midi": 57,
+      "beat": 19.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "piano",
+      "midi": 60,
+      "beat": 19.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "piano",
+      "midi": 67,
+      "beat": 21,
+      "hold": 1.8,
+      "gain": 0.36,
+      "pan": -0.05
+    },
+    {
+      "instrument": "piano",
+      "midi": 48,
+      "beat": 21,
+      "hold": 1.8,
+      "gain": 0.18,
+      "pan": 0
+    },
+    {
+      "instrument": "piano",
+      "midi": 55,
+      "beat": 22.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "piano",
+      "midi": 62,
+      "beat": 22.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "wood",
+      "midi": 74,
+      "beat": 23,
+      "hold": 0.45,
+      "gain": 0.055,
+      "pan": 0.2
+    },
+    {
+      "instrument": "piano",
+      "midi": 65,
+      "beat": 24,
+      "hold": 1,
+      "gain": 0.36,
+      "pan": -0.05
+    },
+    {
+      "instrument": "piano",
+      "midi": 69,
+      "beat": 25.5,
+      "hold": 1,
+      "gain": 0.36,
+      "pan": -0.05
+    },
+    {
+      "instrument": "piano",
+      "midi": 50,
+      "beat": 24,
+      "hold": 1.8,
+      "gain": 0.18,
+      "pan": 0
+    },
+    {
+      "instrument": "piano",
+      "midi": 57,
+      "beat": 25.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "piano",
+      "midi": 65,
+      "beat": 25.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "piano",
+      "midi": 67,
+      "beat": 27.5,
+      "hold": 1.5,
+      "gain": 0.36,
+      "pan": -0.05
+    },
+    {
+      "instrument": "piano",
+      "midi": 45,
+      "beat": 27,
+      "hold": 1.8,
+      "gain": 0.18,
+      "pan": 0
+    },
+    {
+      "instrument": "piano",
+      "midi": 57,
+      "beat": 28.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "piano",
+      "midi": 60,
+      "beat": 28.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "wood",
+      "midi": 72,
+      "beat": 29,
+      "hold": 0.45,
+      "gain": 0.055,
+      "pan": 0.2
+    },
+    {
+      "instrument": "piano",
+      "midi": 65,
+      "beat": 30,
+      "hold": 1,
+      "gain": 0.36,
+      "pan": -0.05
+    },
+    {
+      "instrument": "piano",
+      "midi": 62,
+      "beat": 31.5,
+      "hold": 1,
+      "gain": 0.36,
+      "pan": -0.05
+    },
+    {
+      "instrument": "piano",
+      "midi": 46,
+      "beat": 30,
+      "hold": 1.8,
+      "gain": 0.18,
+      "pan": 0
+    },
+    {
+      "instrument": "piano",
+      "midi": 58,
+      "beat": 31.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "piano",
+      "midi": 62,
+      "beat": 31.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "piano",
+      "midi": 60,
+      "beat": 33,
+      "hold": 1.8,
+      "gain": 0.36,
+      "pan": -0.05
+    },
+    {
+      "instrument": "piano",
+      "midi": 41,
+      "beat": 33,
+      "hold": 1.8,
+      "gain": 0.18,
+      "pan": 0
+    },
+    {
+      "instrument": "piano",
+      "midi": 57,
+      "beat": 34.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "piano",
+      "midi": 60,
+      "beat": 34.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "wood",
+      "midi": 72,
+      "beat": 35,
+      "hold": 0.45,
+      "gain": 0.055,
+      "pan": 0.2
+    },
+    {
+      "instrument": "piano",
+      "midi": 62,
+      "beat": 36,
+      "hold": 1,
+      "gain": 0.36,
+      "pan": -0.05
+    },
+    {
+      "instrument": "piano",
+      "midi": 65,
+      "beat": 37.5,
+      "hold": 1,
+      "gain": 0.36,
+      "pan": -0.05
+    },
+    {
+      "instrument": "piano",
+      "midi": 43,
+      "beat": 36,
+      "hold": 1.8,
+      "gain": 0.18,
+      "pan": 0
+    },
+    {
+      "instrument": "piano",
+      "midi": 58,
+      "beat": 37.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "piano",
+      "midi": 62,
+      "beat": 37.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "piano",
+      "midi": 67,
+      "beat": 39,
+      "hold": 1,
+      "gain": 0.36,
+      "pan": -0.05
+    },
+    {
+      "instrument": "piano",
+      "midi": 69,
+      "beat": 40.5,
+      "hold": 1,
+      "gain": 0.36,
+      "pan": -0.05
+    },
+    {
+      "instrument": "piano",
+      "midi": 48,
+      "beat": 39,
+      "hold": 1.8,
+      "gain": 0.18,
+      "pan": 0
+    },
+    {
+      "instrument": "piano",
+      "midi": 55,
+      "beat": 40.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "piano",
+      "midi": 64,
+      "beat": 40.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "wood",
+      "midi": 76,
+      "beat": 41,
+      "hold": 0.45,
+      "gain": 0.055,
+      "pan": 0.2
+    },
+    {
+      "instrument": "piano",
+      "midi": 67,
+      "beat": 42.5,
+      "hold": 1.8,
+      "gain": 0.36,
+      "pan": -0.05
+    },
+    {
+      "instrument": "piano",
+      "midi": 48,
+      "beat": 42,
+      "hold": 1.8,
+      "gain": 0.18,
+      "pan": 0
+    },
+    {
+      "instrument": "piano",
+      "midi": 58,
+      "beat": 43.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "piano",
+      "midi": 64,
+      "beat": 43.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "piano",
+      "midi": 65,
+      "beat": 45,
+      "hold": 1.8,
+      "gain": 0.36,
+      "pan": -0.05
+    },
+    {
+      "instrument": "piano",
+      "midi": 41,
+      "beat": 45,
+      "hold": 1.8,
+      "gain": 0.18,
+      "pan": 0
+    },
+    {
+      "instrument": "piano",
+      "midi": 57,
+      "beat": 46.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "piano",
+      "midi": 60,
+      "beat": 46.1,
+      "hold": 1.35,
+      "gain": 0.11,
+      "pan": 0.08
+    },
+    {
+      "instrument": "wood",
+      "midi": 72,
+      "beat": 47,
+      "hold": 0.45,
+      "gain": 0.055,
+      "pan": 0.2
+    }
+  ]
+}

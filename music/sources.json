@@ -1,0 +1,26 @@
+[
+  {
+    "file": "sources/marimba-c4.wav",
+    "sha256": "6d3a893b4af2fcdccab22f1a1d7a79f1fef7cb409d2ae659b50e0e4f112c9506",
+    "library": "VCSL",
+    "license": "CC0-1.0"
+  },
+  {
+    "file": "sources/piano-48.wav",
+    "sha256": "08a742d50d2dbbe741e085514883c39f0725384456ea58d738f9d9441873564b",
+    "library": "FreePats Upright Piano KW",
+    "license": "CC0-1.0"
+  },
+  {
+    "file": "sources/piano-60.wav",
+    "sha256": "bc43666d3b733e4562a3d22e297f12fb69e828b30f435060ebf547a97093c0aa",
+    "library": "FreePats Upright Piano KW",
+    "license": "CC0-1.0"
+  },
+  {
+    "file": "sources/piano-72.wav",
+    "sha256": "0642c74df4c023d2b856c14b3974ae74e091961ab7351d44e37fd994550a7254",
+    "library": "FreePats Upright Piano KW",
+    "license": "CC0-1.0"
+  }
+]
